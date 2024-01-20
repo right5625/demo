@@ -14,10 +14,12 @@ class DemoApplicationTests {
 	QuestionRepository questionRepository;
 	@Test
 	void test() {
-		Question question = new Question();
-		question.setSubject("안녕하세요.");
-		question.setContent("반갑습니다.");
-		question.setCreateDate(LocalDateTime.now());
-		this.questionRepository.save(question);
+		for (int i = 0; i < 300; i++) {
+			Question question = new Question();
+			question.setSubject("테스트 데이터" + i);
+			question.setContent("내용 없음");
+			question.setCreateDate(LocalDateTime.now());
+			questionRepository.save(question);
+		}
 	}
 }
