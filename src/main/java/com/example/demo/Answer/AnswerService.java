@@ -14,13 +14,14 @@ import java.util.Optional;
 public class AnswerService {
     private final AnswerRepository answerRepository;
 
-    public void createAnswer(String content, Question question, SiteUser author) {
+    public Answer createAnswer(String content, Question question, SiteUser author) {
         Answer answer = new Answer();
         answer.setContent(content);
         answer.setCreateDate(LocalDateTime.now());
         answer.setQuestion(question);
         answer.setAuthor(author);
         this.answerRepository.save(answer);
+        return answer;
     }
 
     public Answer getAnswer(Integer id) {
@@ -41,5 +42,10 @@ public class AnswerService {
 
     public void deleteAnswer(Answer answer) {
         this.answerRepository.delete(answer);
+    }
+
+    public void voteAnswer(Answer answer, SiteUser siteUser) {
+        answer.getVoter().add(siteUser);
+        this.answerRepository.save(answer);
     }
 }

@@ -36,8 +36,8 @@ public class AnswerController {
             model.addAttribute("question", question);
             return "question_detail";
         }
-        this.answerService.createAnswer(answerForm.getContent(), question, siteUser);
-        return String.format("redirect:/question/detail/%s", id);
+        Answer answer =  this.answerService.createAnswer(answerForm.getContent(), question, siteUser);
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
 
     @GetMapping("/modify/{id}")
@@ -62,7 +62,7 @@ public class AnswerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
         }
         this.answerService.modifyAnswer(answer, answerForm.getContent());
-        return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
 
     @GetMapping("/delete/{id}")
@@ -74,5 +74,14 @@ public class AnswerController {
         }
         this.answerService.deleteAnswer(answer);
         return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
+    }
+
+    @GetMapping("/vote/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String vote(Principal principal, @PathVariable("id") Integer id) {
+        Answer answer = this.answerService.getAnswer(id);
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        this.answerService.voteAnswer(answer, siteUser);
+        return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), answer.getId());
     }
 }
